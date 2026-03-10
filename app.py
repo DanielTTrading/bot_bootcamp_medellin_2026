@@ -72,7 +72,7 @@ ADMINS: set[int] = {
 # =========================
 # TEXTOS / RECURSOS
 # =========================
-NOMBRE_EVENTO = "Bootcamp 2025 Bogotá"
+NOMBRE_EVENTO = "Bootcamp Medellín 2026"
 BIENVENIDA = (
     f"🎉 ¡Bienvenido/a al {NOMBRE_EVENTO}! 🎉\n\n"
     "Has sido validado correctamente.\n"
@@ -98,8 +98,8 @@ EXNESS_ACCOUNT_URL = "https://one.exnessonelink.com/a/s3wj0b5qry"
 EXNESS_COPY_URL = "https://social-trading.exness.com/strategy/227834645/a/s3wj0b5qry?sharer=trader"
 
 ENLACES_CONEXION: Dict[str, str] = {
-    "Bootcamp Día 1": "https://us06web.zoom.us/j/85908132642?pwd=ItdvVDASOYRilJHB43c2Naz0eS76XJ.1",
-    "Bootcamp Día 2": "https://us06web.zoom.us/j/84348314641?pwd=ymlDnmB2Cw2s2vGcNbIrFVdEnMRIXg.1",
+    "Bootcamp Día 1": "https://us06web.zoom.us/j/85439187782?pwd=RErn88W7mX3eQO70DO0OjjHb2mavaa.1",
+    "Bootcamp Día 2": "https://us06web.zoom.us/j/84778991124?pwd=7UZXRswyFUsaTCmaswdEOawZ1flDoN.1",
 }
 
 # =========================
