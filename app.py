@@ -52,6 +52,8 @@ PRELAUNCH_MESSAGE = os.getenv(
     "⏳ Vuelve pronto y usa /start para comenzar. 🙌"
 )
 
+# WIFI
+WIFI_SSID = os.getenv("WIFI_SSID", "EVENTO CORPORATIVO")
 WIFI_MSG = os.getenv(
     "WIFI_MESSAGE",
     "📶 *Wi-Fi del evento*\n\n"
