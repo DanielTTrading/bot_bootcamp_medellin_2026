@@ -53,11 +53,11 @@ PRELAUNCH_MESSAGE = os.getenv(
 )
 
 # WIFI
-WIFI_SSID = os.getenv("WIFI_SSID", "Club_Nogal")
+WIFI_SSID = os.getenv("WIFI_SSID", "EVENTO CORPORATIVO")
 WIFI_MSG = os.getenv(
     "WIFI_MESSAGE",
     "📶 *Wi-Fi del evento*\n\n• **Nombre de red (SSID):** `{ssid}`\n"
-    "• *La red es abierta (no necesita clave).*"
+    "• Contraseña: Estelar2025*"
 ).replace("{ssid}", WIFI_SSID)
 
 # --- ADMINS (incluye el nuevo 7724870185) ---
