@@ -167,8 +167,8 @@ def esta_en_prelanzamiento() -> tuple[bool, str]:
 # =========================
 PRESENTADORES = [
     ("p1", "Juan Pablo Vieira"),
-    ("p2", "Andrés Durán"),
-    ("p3", "Carlos Andrés Pérez"),
+    # ("p2", "Andrés Durán"),
+    # ("p3", "Carlos Andrés Pérez"),
     ("p4", "Jorge Mario Rubio"),
     ("p5", "Jair Viana"),
 ]
@@ -188,8 +188,8 @@ MATERIALES: Dict[str, Dict[str, Dict[str, Path]]] = {
 # Videos por presentador (URLs)
 VIDEO_LINKS: Dict[str, Dict[str, str]] = {
     "p1": {
-        "Crear Cuenta en Interactive Brokers": "https://drive.google.com/file/d/1thOot6PZdxLgutH3c3JuCrIwXwRGcxeb/view?usp=sharing",
-        "Crear Cuenta en TRII": "https://drive.google.com/file/d/1thOot6PZdxLgutH3c3JuCrIwXwRGcxeb/view?usp=sharing",
+        "Crear Cuenta en Interactive Brokers": "https://drive.google.com/file/d/1dUOQPOX_pMihcfr2DoAGj6f6QXx5xI7u/view?usp=sharing",
+        "Crear Cuenta en TRII": "https://drive.google.com/file/d/1maQ5aewQCv0lI_Gw1sJjmDQUsTglVs9l/view?usp=sharing",
     },
     "p2": {
         # "DATOS DE EMPRESAS Y MACRO": "https://drive.google.com/file/d/1S-LncN3dd3eYBBCO_YgYuv5n6d2DSGAM/view?usp=sharing",
