@@ -583,6 +583,7 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/help - Ayuda\n"
         "/broadcast - (admins) iniciar envío masivo\n"
         "/encuesta - (admins) enviar encuesta de horario\n"
+        "/resultados_encuesta - (admins) ver resultados de la encuesta\n"
         "/cancel - cancelar envío masivo\n"
         "/miid - ver tu ID de Telegram\n"
     )
@@ -611,6 +612,43 @@ async def encuesta_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("📤 Enviando encuesta a los usuarios validados...")
     ok, fail = await enviar_encuesta_horario(context)
     await update.message.reply_text(f"✅ Encuesta enviada a {ok} usuarios. ❌ Fallidos: {fail}")
+
+async def resultados_encuesta_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await upsert_user_seen(update.effective_user)
+    uid = update.effective_user.id if update.effective_user else 0
+
+    if uid not in ADMINS:
+        await update.message.reply_text("🚫 Este comando es solo para administradores.")
+        return
+
+    pool = await get_db_pool()
+    async with pool.connection() as aconn:
+        async with aconn.cursor() as cur:
+            await cur.execute("""
+                SELECT opcion, COUNT(*)
+                FROM encuesta_horarios
+                GROUP BY opcion
+                ORDER BY opcion;
+            """)
+            rows = await cur.fetchall()
+
+    if not rows:
+        await update.message.reply_text("📭 Aún no hay votos registrados en la encuesta.")
+        return
+
+    total = sum(row[1] for row in rows)
+
+    lineas = ["📊 *Resultados de la encuesta de horario*\n"]
+    for opcion, cantidad in rows:
+        lineas.append(f"• *{opcion}*: {cantidad}")
+
+    lineas.append(f"\n*Total de votos:* {total}")
+
+    await update.message.reply_text(
+        "\n".join(lineas),
+        parse_mode="Markdown"
+    )
+
 
 async def maybe_broadcast_any(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await intentar_broadcast_si_corresponde(update, context):
@@ -1005,6 +1043,7 @@ def build_app() -> Application:
     app.add_handler(CommandHandler("menu", menu_cmd))
     app.add_handler(CommandHandler("miid", miid_cmd))
     app.add_handler(CommandHandler("encuesta", encuesta_cmd))
+    app.add_handler(CommandHandler("resultados_encuesta", resultados_encuesta_cmd))
 
     app.add_handler(CommandHandler("broadcast", broadcast_start_cmd))
     app.add_handler(CommandHandler("cancel", broadcast_cancel))
