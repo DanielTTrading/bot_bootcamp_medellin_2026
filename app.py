@@ -332,6 +332,15 @@ async def init_db():
             """)
             await cur.execute("CREATE INDEX IF NOT EXISTS idx_subscribed_users_correo ON subscribed_users (correo);")
             await cur.execute("CREATE INDEX IF NOT EXISTS idx_subscribed_users_cedula ON subscribed_users (cedula);")
+            await cur.execute("""
+            CREATE TABLE IF NOT EXISTS encuesta_horarios (
+                user_id     BIGINT PRIMARY KEY,
+                nombre      TEXT,
+                opcion      TEXT,
+                created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            """)
 
 async def upsert_user_seen(u) -> None:
     if not u:
@@ -375,6 +384,58 @@ async def fetch_broadcast_user_ids() -> list[int]:
             await cur.execute("SELECT user_id FROM subscribed_users WHERE nombre IS NOT NULL;")
             rows = await cur.fetchall()
     return [r[0] for r in rows]
+
+async def guardar_respuesta_encuesta(user_id: int, nombre: str, opcion: str) -> None:
+    pool = await get_db_pool()
+    async with pool.connection() as aconn:
+        async with aconn.cursor() as cur:
+            await cur.execute("""
+                INSERT INTO encuesta_horarios (user_id, nombre, opcion, created_at, updated_at)
+                VALUES (%s, %s, %s, NOW(), NOW())
+                ON CONFLICT (user_id) DO UPDATE
+                   SET nombre = EXCLUDED.nombre,
+                       opcion = EXCLUDED.opcion,
+                       updated_at = NOW();
+            """, (user_id, nombre, opcion))
+
+async def enviar_encuesta_horario(context: ContextTypes.DEFAULT_TYPE) -> tuple[int, int]:
+    users = await fetch_broadcast_user_ids()
+
+    texto = (
+        "📢 *Sesión de Acompañamiento Bootcamp* 💯\n\n"
+        "Desde JP Tactical Trading queremos invitarlos a una Sesión de Acompañamiento exclusiva para participantes del Bootcamp, "
+        "un espacio pensado para brindarles un refuerzo más personalizado en el manejo de las plataformas que utilizamos para operar.\n\n"
+        "💡 En esta primera sesión abordaremos:\n\n"
+        "• Manejo de plataformas\n"
+        "• Posicionamiento de órdenes\n"
+        "• Refuerzo de conceptos clave para operar\n"
+        "• Resolución de dudas de manera más personalizada\n\n"
+        "✅ *Posibles horarios:*\n"
+        "• Hoy a las 6:00 p. m.\n"
+        "• Mañana a las 6:00 p. m.\n\n"
+        "Por favor selecciona el horario en el que te puedes conectar 👇"
+    )
+
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🕕 Hoy 6:00 p. m.", callback_data="encuesta_horario:HOY_6PM")],
+        [InlineKeyboardButton("🕕 Mañana 6:00 p. m.", callback_data="encuesta_horario:MANANA_6PM")],
+    ])
+
+    ok, fail = 0, 0
+    for uid in users:
+        try:
+            await context.bot.send_message(
+                chat_id=uid,
+                text=texto,
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+            ok += 1
+        except Exception:
+            fail += 1
+        await asyncio.sleep(0.03)
+
+    return ok, fail
 
 async def get_usuario_validado(user_id: int) -> Optional[dict]:
     pool = await get_db_pool()
@@ -521,6 +582,7 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/menu - Mostrar menú\n"
         "/help - Ayuda\n"
         "/broadcast - (admins) iniciar envío masivo\n"
+        "/encuesta - (admins) enviar encuesta de horario\n"
         "/cancel - cancelar envío masivo\n"
         "/miid - ver tu ID de Telegram\n"
     )
@@ -537,6 +599,18 @@ async def miid_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Si eres admin, asegúrate de que tu ID esté en la lista ADMINS.",
         parse_mode="Markdown"
     )
+
+async def encuesta_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await upsert_user_seen(update.effective_user)
+    uid = update.effective_user.id if update.effective_user else 0
+
+    if uid not in ADMINS:
+        await update.message.reply_text("🚫 Este comando es solo para administradores.")
+        return
+
+    await update.message.reply_text("📤 Enviando encuesta a los usuarios validados...")
+    ok, fail = await enviar_encuesta_horario(context)
+    await update.message.reply_text(f"✅ Encuesta enviada a {ok} usuarios. ❌ Fallidos: {fail}")
 
 async def maybe_broadcast_any(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await intentar_broadcast_si_corresponde(update, context):
@@ -869,6 +943,35 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await accion_wifi(query, context)
         return
 
+    if data.startswith("encuesta_horario:"):
+        opcion_raw = data.split(":", 1)[1]
+
+        if opcion_raw == "HOY_6PM":
+            opcion = "Hoy 6:00 p. m."
+        elif opcion_raw == "MANANA_6PM":
+            opcion = "Mañana 6:00 p. m."
+        else:
+            opcion = opcion_raw
+
+        user_id = query.from_user.id
+
+        perfil = PERFILES.get(user_id)
+        if perfil and perfil.nombre:
+            nombre = perfil.nombre
+        else:
+            usuario_db = await get_usuario_validado(user_id)
+            nombre = usuario_db["nombre"] if usuario_db else (query.from_user.first_name or "Usuario")
+
+        await guardar_respuesta_encuesta(user_id, nombre, opcion)
+
+        await query.edit_message_text(
+            f"✅ *Tu respuesta fue guardada correctamente*\n\n"
+            f"Horario elegido: *{opcion}*\n\n"
+            "Gracias por participar.",
+            parse_mode="Markdown"
+        )
+        return
+
     if data == "menu_exness":
         texto = (
             "💳 *Apertura de cuenta demo*\n\n"
@@ -901,6 +1004,7 @@ def build_app() -> Application:
     app.add_handler(CommandHandler("help", help_cmd))
     app.add_handler(CommandHandler("menu", menu_cmd))
     app.add_handler(CommandHandler("miid", miid_cmd))
+    app.add_handler(CommandHandler("encuesta", encuesta_cmd))
 
     app.add_handler(CommandHandler("broadcast", broadcast_start_cmd))
     app.add_handler(CommandHandler("cancel", broadcast_cancel))
