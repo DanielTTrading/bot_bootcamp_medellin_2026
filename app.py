@@ -61,13 +61,13 @@ WIFI_MSG = os.getenv(
     "• Contraseña: `Estelar2025*`"
 ).replace("{ssid}", WIFI_SSID)
 
-# --- ADMINS (incluye el nuevo 7724870185) ---
+# --- ADMINS ---
 ADMINS: set[int] = {
     7710920544,
     7560374352,
     7837963996,
     8465613365,
-    7724870185,  # NUEVO
+    7724870185,
 }
 
 # =========================
@@ -108,10 +108,8 @@ ENLACES_CONEXION: Dict[str, str] = {
 # =========================
 USUARIOS_JSON = DATA_DIR / "usuarios.json"
 USUARIOS_EMBEBIDOS: Dict[str, str] = {
-    # "cedula_o_correo": "Nombre Apellido",
     "75106729": "Daniel Mejia sanchez",
     "furolol@gmail.com": "Daniel Mejia sanchez",
-    # ... añade aquí o usa data/usuarios.json
 }
 
 def es_correo(s: str) -> bool:
@@ -163,17 +161,14 @@ def esta_en_prelanzamiento() -> tuple[bool, str]:
     return (False, "")
 
 # =========================
-# MATERIAL DE APOYO (igual al primero)
+# MATERIAL DE APOYO
 # =========================
 PRESENTADORES = [
     ("p1", "Juan Pablo Vieira"),
-    # ("p2", "Andrés Durán"),
-    # ("p3", "Carlos Andrés Pérez"),
     ("p4", "Jorge Mario Rubio"),
     ("p5", "Jair Viana"),
 ]
 
-# Estructura: MATERIALES[pid]["docs"][nombre] = Path(...)
 MATERIALES: Dict[str, Dict[str, Dict[str, Path]]] = {
     "p1": {"videos": {}, "docs": {}},
     "p2": {"videos": {}, "docs": {}},
@@ -181,29 +176,13 @@ MATERIALES: Dict[str, Dict[str, Dict[str, Path]]] = {
     "p4": {"videos": {}, "docs": {}},
     "p5": {"videos": {}, "docs": {}},
 }
-# Ejemplo: agrega aquí tus archivos (debe existir el fichero en data/docs/)
-# MATERIALES["p2"]["docs"]["VALORACIÓN RAPIDA JP TACTICAL"] = DOCS_DIR / "VALORACIÓN RAPIDA JP TACTICAL.xlsx"
-# MATERIALES["p2"]["docs"]["VALORACIÓN RAPIDA JP TACTICAL DIDACTICA"] = DOCS_DIR / "VALORACIÓN RAPIDA- DIDACTICA-2.xlsx"
 
-# Videos por presentador (URLs)
 VIDEO_LINKS: Dict[str, Dict[str, str]] = {
     "p1": {
         "Crear Cuenta en Interactive Brokers": "https://drive.google.com/file/d/1dUOQPOX_pMihcfr2DoAGj6f6QXx5xI7u/view?usp=sharing",
         "Crear Cuenta en TRII": "https://drive.google.com/file/d/1maQ5aewQCv0lI_Gw1sJjmDQUsTglVs9l/view?usp=sharing",
     },
-    "p2": {
-        # "DATOS DE EMPRESAS Y MACRO": "https://drive.google.com/file/d/1S-LncN3dd3eYBBCO_YgYuv5n6d2DSGAM/view?usp=sharing",
-        # "DATOS DE EMPRESAS": "https://drive.google.com/file/d/1Yo1CxNipafXdbcoXK6ahpGgaHdJqdbzj/view?usp=sharing",
-        # "FRED": "https://drive.google.com/file/d/12SRmvSbdhrS0qeM4dFE1EMSkScH4hKcL/view?usp=sharing",
-        # "HERRAMIENTA D.O.O.R": "https://drive.google.com/file/d/1zwejfDpdC7Z0CVsCb4t0UqQD0yqdPBBe/view?usp=sharing",
-        # "MORNINGSTAR": "https://drive.google.com/file/d/1POiz8YG7xYZpjxaBZ7YiZqmI7RpCQgLa/view?usp=sharing",
-        # "MOVIMIENTOS DE SENADORES USA": "https://drive.google.com/file/d/1zGIZWRRs3EiMAv-i9DDe5N57XxYWkqx5/view?usp=sharing",
-        # "PAGINA MORDOR INTELLIGENCE": "https://drive.google.com/file/d/17HMRzdBHknyxLeoB7JA0V9h-gtQrgZX4/view?usp=sharing",
-        # "PORTAFOLIO GRANDES INVERSORES": "https://drive.google.com/file/d/1-qcP4LNAlCaqajgepQYcREC8fdzwpgY-/view?usp=sharing",
-        # "SCREENER, MAPS Y DATOS": "https://drive.google.com/file/d/1Mn_SmvqXEijzAOPoNtsnoW3mWksqPdTl/view?usp=sharing",
-        # "SEC": "https://drive.google.com/file/d/1OwIZ_Bk94RHjQZf0zmxtlH38frrxzb70/view?usp=sharing",
-        # "VALORACIÓN COMPAÑIA": "https://drive.google.com/file/d/1mqG03xZB8urE7_VA1a8YcRO4nalxnSWD/view?usp=sharing",
-    },
+    "p2": {},
     "p3": {},
     "p4": {},
     "p5": {},
@@ -213,11 +192,6 @@ ENLACES_POR_PRESENTADOR: Dict[str, Dict[str, str]] = {
     "p1": {"Web": "https://ttrading.co", "YouTube": "https://www.youtube.com/@JPTacticalTrading"},
     "p2": {
         "Instagram Andrés Durán": "https://www.instagram.com/duranwealth?igsh=aTdjYzQ5eGdtanI=",
-        # "FRED": "https://fred.stlouisfed.org/",
-        # "MACRO TRENDS": "https://www.macrotrends.net/",
-        # "MORNINGSTAR": "https://www.morningstar.com/",
-        # "Web": "https://ttrading.co",
-        # "YouTube": "https://www.youtube.com/@JPTacticalTrading",
     },
     "p3": {"Web": "https://ttrading.co", "YouTube": "https://www.youtube.com/@JPTacticalTrading"},
     "p4": {
@@ -244,7 +218,6 @@ def principal_inline() -> InlineKeyboardMarkup:
         [InlineKeyboardButton("🔗 Enlaces y Conexión", callback_data="menu_enlaces")],
         [InlineKeyboardButton("📣 Enviar mensaje (Admin)", callback_data="admin_broadcast")],
     ])
-
 
 def presentadores_keyboard(prefix: str) -> InlineKeyboardMarkup:
     rows = [[InlineKeyboardButton(nombre, callback_data=f"{prefix}:{pid}")] for pid, nombre in PRESENTADORES]
@@ -278,7 +251,6 @@ def enlaces_inline_general() -> InlineKeyboardMarkup:
         [InlineKeyboardButton("⭐ Enlaces por presentador", callback_data="enlaces_por_presentador")],
         [InlineKeyboardButton("⬅️ Volver", callback_data="volver_menu_principal")],
     ])
-
 
 def enlaces_presentador_lista(pid: str) -> InlineKeyboardMarkup:
     enlaces = ENLACES_POR_PRESENTADOR.get(pid, {})
@@ -318,7 +290,7 @@ def bottom_keyboard() -> ReplyKeyboardMarkup:
     )
 
 # =========================
-# AUTH (RAM)
+# AUTH
 # =========================
 @dataclass
 class PerfilUsuario:
@@ -326,11 +298,6 @@ class PerfilUsuario:
     autenticado: bool = False
 
 PERFILES: Dict[int, PerfilUsuario] = {}
-
-async def ensure_auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Tuple[bool, int]:
-    user_id = update.effective_user.id if update.effective_user else 0
-    perfil = PERFILES.get(user_id)
-    return (perfil is not None and perfil.autenticado), user_id
 
 # =========================
 # DB (PostgreSQL)
@@ -340,7 +307,7 @@ async def get_db_pool() -> AsyncConnectionPool:
     if DB_POOL is None:
         if not DATABASE_URL:
             raise RuntimeError("Falta DATABASE_URL para conectarse a PostgreSQL.")
-        DB_POOL = AsyncConnectionPool(DATABASE_URL, min_size=1, max_size=5)
+        DB_POOL = AsyncConnectionPool(DATABASE_URL, min_size=1, max_size=5, open=False)
         await DB_POOL.open()
     return DB_POOL
 
@@ -408,6 +375,45 @@ async def fetch_broadcast_user_ids() -> list[int]:
             await cur.execute("SELECT user_id FROM subscribed_users WHERE nombre IS NOT NULL;")
             rows = await cur.fetchall()
     return [r[0] for r in rows]
+
+async def get_usuario_validado(user_id: int) -> Optional[dict]:
+    pool = await get_db_pool()
+    async with pool.connection() as aconn:
+        async with aconn.cursor() as cur:
+            await cur.execute("""
+                SELECT nombre, cedula, correo
+                FROM subscribed_users
+                WHERE user_id = %s
+                  AND nombre IS NOT NULL
+                LIMIT 1;
+            """, (user_id,))
+            row = await cur.fetchone()
+
+    if not row:
+        return None
+
+    return {
+        "nombre": row[0],
+        "cedula": row[1],
+        "correo": row[2],
+    }
+
+async def ensure_auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Tuple[bool, int]:
+    user_id = update.effective_user.id if update.effective_user else 0
+
+    perfil = PERFILES.get(user_id)
+    if perfil is not None and perfil.autenticado:
+        return True, user_id
+
+    usuario_db = await get_usuario_validado(user_id)
+    if usuario_db:
+        PERFILES[user_id] = PerfilUsuario(
+            nombre=usuario_db["nombre"],
+            autenticado=True
+        )
+        return True, user_id
+
+    return False, user_id
 
 # =========================
 # HELPERS
@@ -484,10 +490,24 @@ async def envia_documento(upd_or_q, context: ContextTypes.DEFAULT_TYPE, ruta: Pa
 # =========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await upsert_user_seen(update.effective_user)
+
     en_pre, msg = esta_en_prelanzamiento()
     if en_pre:
         await update.message.reply_text(msg)
         return
+
+    autenticado, user_id = await ensure_auth(update, context)
+
+    if autenticado:
+        nombre = PERFILES[user_id].nombre if user_id in PERFILES else "Usuario"
+        primer_nombre = nombre.split()[0]
+        await update.message.reply_text(
+            f"¡Hola de nuevo, {primer_nombre}! 😊\n{BIENVENIDA}",
+            reply_markup=bottom_keyboard()
+        )
+        await update.message.reply_text("Menú principal:", reply_markup=principal_inline())
+        return
+
     await update.message.reply_text(
         f"👋 Hola, este es el bot del {NOMBRE_EVENTO}.\n\n"
         "Por favor escribe tu **cédula** o **correo registrado** para validar tu acceso:",
@@ -517,13 +537,10 @@ async def miid_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Si eres admin, asegúrate de que tu ID esté en la lista ADMINS.",
         parse_mode="Markdown"
     )
-# --- NUEVO: handler que captura medios (no texto) y ejecuta broadcast si está activo
+
 async def maybe_broadcast_any(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Si estás en modo broadcast, envía este mensaje a todos y termina
     if await intentar_broadcast_si_corresponde(update, context):
         return
-    # Si no hay broadcast activo, no hacemos nada aquí
-
 
 async def menu_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await upsert_user_seen(update.effective_user)
@@ -609,11 +626,9 @@ async def intentar_broadcast_si_corresponde(update: Update, context: ContextType
 async def text_ingreso_o_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await upsert_user_seen(update.effective_user)
 
-    # 1) Si admin está en modo broadcast, se maneja aquí y termina
     if await intentar_broadcast_si_corresponde(update, context):
         return
 
-    # 2) Normal
     en_pre, msg = esta_en_prelanzamiento()
     if en_pre:
         await update.message.reply_text(msg)
@@ -639,7 +654,6 @@ async def text_ingreso_o_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("Estás autenticado. Usa el menú:", reply_markup=principal_inline())
         return
 
-    # Validación contra base local (JSON/embebida)
     clave = normaliza(texto)
     if not clave:
         await update.message.reply_text("❗ Por favor escribe tu **cédula** o **correo**.")
@@ -672,17 +686,23 @@ async def text_ingreso_o_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     await update.message.reply_text("Menú principal:", reply_markup=principal_inline())
 
 # =========================
-# CALLBACKS MENÚ (incluye Material, Ubicación y Wi-Fi)
+# CALLBACKS MENÚ
 # =========================
 async def accion_ubicacion(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
     if isinstance(upd_or_q, Update):
         msg = upd_or_q.message
-        await msg.reply_text("📍 *Ubicación del evento*\nToca el botón para abrir en Google Maps.",
-                             parse_mode="Markdown", reply_markup=ubicacion_inline())
+        await msg.reply_text(
+            "📍 *Ubicación del evento*\nToca el botón para abrir en Google Maps.",
+            parse_mode="Markdown",
+            reply_markup=ubicacion_inline()
+        )
     else:
         q = upd_or_q
-        await q.edit_message_text("📍 *Ubicación del evento*\nToca el botón para abrir en Google Maps.",
-                                  parse_mode="Markdown", reply_markup=ubicacion_inline())
+        await q.edit_message_text(
+            "📍 *Ubicación del evento*\nToca el botón para abrir en Google Maps.",
+            parse_mode="Markdown",
+            reply_markup=ubicacion_inline()
+        )
 
 async def accion_wifi(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
     if isinstance(upd_or_q, Update):
@@ -693,7 +713,6 @@ async def accion_wifi(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
         await q.edit_message_text(WIFI_MSG, parse_mode="Markdown", reply_markup=wifi_inline())
 
 async def accion_agenda(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
-    """Envía el PDF de la agenda si existe; de lo contrario, muestra un texto."""
     texto_header = "📅 Agenda del evento"
     if isinstance(upd_or_q, Update):
         message = upd_or_q.message
@@ -711,7 +730,6 @@ async def accion_agenda(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
         await envia_documento(upd_or_q, context, AGENDA_PDF, "Agenda del evento")
         return
 
-    # Fallback si no subiste data/agenda.pdf
     texto = (
         "📅 *Agenda del evento*\n"
         "- Día 1: Introducción y Setup\n"
@@ -723,8 +741,6 @@ async def accion_agenda(upd_or_q, context: ContextTypes.DEFAULT_TYPE):
         await edit(texto, parse_mode="Markdown", reply_markup=principal_inline())
     else:
         await message.reply_text(texto, parse_mode="Markdown", reply_markup=principal_inline())
-
-
 
 async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -747,13 +763,10 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("Menú principal:", reply_markup=principal_inline())
         return
 
-
     if data == "menu_agenda":
         await accion_agenda(query, context)
         return
 
-
-    # Material de apoyo
     if data == "menu_material":
         await query.edit_message_text(
             "📚 *Material de apoyo*\nElige un presentador:",
@@ -805,7 +818,6 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.message.reply_text("No se encontró el documento solicitado.")
         return
 
-    # Enlaces generales
     if data == "menu_enlaces":
         await query.edit_message_text("🔗 *Enlaces y Conexión*",
                                       reply_markup=enlaces_inline_general(),
@@ -824,8 +836,7 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                       parse_mode="Markdown",
                                       reply_markup=InlineKeyboardMarkup(rows))
         return
-    
-        # Enlaces por presentador (mostrar lista de presentadores)
+
     if data == "enlaces_por_presentador":
         await query.edit_message_text(
             "⭐ *Elige un presentador:*",
@@ -833,7 +844,6 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
         )
         return
-
 
     if data.startswith("link_pres:"):
         pid = data.split(":", 1)[1]
@@ -851,7 +861,6 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="Markdown")
         return
 
-    # Ubicación y Wi-Fi
     if data == "menu_ubicacion":
         await accion_ubicacion(query, context)
         return
@@ -860,7 +869,6 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await accion_wifi(query, context)
         return
 
-    # Exness
     if data == "menu_exness":
         texto = (
             "💳 *Apertura de cuenta demo*\n\n"
@@ -871,7 +879,6 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(texto, parse_mode="Markdown", reply_markup=exness_inline())
         return
 
-    # Broadcast (por si cae aquí)
     if data == "admin_broadcast":
         await broadcast_start_cb(update, context)
         return
@@ -890,24 +897,20 @@ def build_app() -> Application:
 
     app = Application.builder().token(BOT_TOKEN).post_init(_post_init).build()
 
-    # Handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_cmd))
     app.add_handler(CommandHandler("menu", menu_cmd))
     app.add_handler(CommandHandler("miid", miid_cmd))
 
-    # Broadcast simple por bandera
     app.add_handler(CommandHandler("broadcast", broadcast_start_cmd))
     app.add_handler(CommandHandler("cancel", broadcast_cancel))
     app.add_handler(CallbackQueryHandler(broadcast_start_cb, pattern="^admin_broadcast$"))
 
-    # Broadcast de medios / no-texto (debe ir ANTES del handler de texto)
     app.add_handler(MessageHandler((~filters.COMMAND) & (~filters.TEXT), maybe_broadcast_any))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_ingreso_o_menu))
     app.add_handler(CallbackQueryHandler(menu_callbacks))
 
     return app
-
 
 if __name__ == "__main__":
     application = build_app()
