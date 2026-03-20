@@ -249,7 +249,7 @@ def lista_video_links_inline(pid: str) -> InlineKeyboardMarkup:
 
 def enlaces_inline_general() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🧩 Conexiones del evento (Zoom)", callback_data="enlaces_conexion")],
+        [InlineKeyboardButton("🧩 Enlaces Bootcamp", callback_data="enlaces_conexion")],
         [InlineKeyboardButton("⭐ Enlaces por presentador", callback_data="enlaces_por_presentador")],
         [InlineKeyboardButton("⬅️ Volver", callback_data="volver_menu_principal")],
     ])
