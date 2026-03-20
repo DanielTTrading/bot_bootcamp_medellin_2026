@@ -99,8 +99,10 @@ EXNESS_ACCOUNT_URL = "https://one.exnessonelink.com/a/s3wj0b5qry"
 EXNESS_COPY_URL = "https://social-trading.exness.com/strategy/227834645/a/s3wj0b5qry?sharer=trader"
 
 ENLACES_CONEXION: Dict[str, str] = {
-    "Bootcamp Día 1": "https://us06web.zoom.us/j/85439187782?pwd=RErn88W7mX3eQO70DO0OjjHb2mavaa.1",
-    "Bootcamp Día 2": "https://us06web.zoom.us/j/84778991124?pwd=7UZXRswyFUsaTCmaswdEOawZ1flDoN.1",
+    "Bootcamp Día 1": "https://drive.google.com/file/d/1tRt882AhrAQPcAlATexlVMkWAZ0nu5_n/view?usp=sharing",
+    "Bootcamp Día 2": "https://drive.google.com/file/d/12shGx6qrtT1mzQjfdCIwiOHi8EBmteyM/view?usp=sharing",
+    "Semana 1 Bootcamp 2026": "https://drive.google.com/file/d/11lPWwvqCcdaG2Wkn9Z7eN14M29sJuFOm/view?usp=sharing",
+    "Sesión de Acompañamiento Bootcamp": "https://drive.google.com/file/d/17d7ebEIPMrvPLUCY1tZwHvGNplBnQv4P/view?usp=sharing",
 }
 
 # =========================
@@ -944,7 +946,7 @@ async def menu_callbacks(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         rows = [[InlineKeyboardButton(nombre, url=url)] for nombre, url in ENLACES_CONEXION.items()]
         rows.append([InlineKeyboardButton("⬅️ Volver", callback_data="menu_enlaces")])
-        await query.edit_message_text("🧩 *Conexiones del evento (Zoom):*",
+        await query.edit_message_text("🧩 *Enlaces de Bootcamp:*",
                                       parse_mode="Markdown",
                                       reply_markup=InlineKeyboardMarkup(rows))
         return
